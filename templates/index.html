@@ -25,13 +25,13 @@
 
             {% for person in people %}
             <tr>
-                <td>{{ person[0] }}</td>
-                <td>{{ person[1] }}</td>
-                <td>{{ person[2] }}</td>
-                <td>{{ person[3] }}</td>
+                <td>{{ person.id }}</td>
+                <td>{{ person.name }}</td>
+                <td>{{ person.age }}</td>
+                <td>{{ person.city }}</td>
                 <td>
-                    <a href="/edit/{{ person[0] }}">Edit</a> |
-                    <a href="/delete/{{ person[0] }}">Delete</a>
+                    <a href="/edit/{{ person.id }}">Edit</a> |
+                    <a href="/delete/{{ person.id }}">Delete</a>
                 </td>
             </tr>
             {% endfor %}

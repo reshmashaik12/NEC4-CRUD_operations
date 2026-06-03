@@ -1,66 +1,31 @@
-from flask import Flask, render_template, request, redirect
-import sqlite3
+from flask import Flask, render_template, request, redirect, abort
 
 app = Flask(__name__)
 
-DATABASE = "people.db"
-
-def init_db():
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS people(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        age INTEGER NOT NULL,
-        city TEXT NOT NULL
-    )
-    """)
-
-    conn.commit()
-    conn.close()
-
-init_db()
+people = []
+next_id = 1
 
 @app.route('/')
 def index():
-
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM people")
-    people = cursor.fetchall()
-
-    print(f"DEBUG: people = {people}")
-    print(f"DEBUG: people type = {type(people)}")
-    if people:
-        print(f"DEBUG: first person = {people[0]}")
-        print(f"DEBUG: first person type = {type(people[0])}")
-
-    conn.close()
-
     return render_template('index.html', people=people)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add():
+    global next_id
 
     if request.method == 'POST':
-
         name = request.form['name']
         age = request.form['age']
         city = request.form['city']
 
-        conn = sqlite3.connect(DATABASE)
-        cursor = conn.cursor()
-
-        cursor.execute(
-            "INSERT INTO people(name,age,city) VALUES(?,?,?)",
-            (name, age, city)
-        )
-
-        conn.commit()
-        conn.close()
+        person = {
+            'id': next_id,
+            'name': name,
+            'age': int(age),
+            'city': city
+        }
+        people.append(person)
+        next_id += 1
 
         return redirect('/')
 
@@ -68,45 +33,22 @@ def add():
 
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
-
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
+    person = next((p for p in people if p['id'] == id), None)
+    if person is None:
+        abort(404)
 
     if request.method == 'POST':
-
-        name = request.form['name']
-        age = request.form['age']
-        city = request.form['city']
-
-        cursor.execute("""
-        UPDATE people
-        SET name=?, age=?, city=?
-        WHERE id=?
-        """, (name, age, city, id))
-
-        conn.commit()
-        conn.close()
-
+        person['name'] = request.form['name']
+        person['age'] = int(request.form['age'])
+        person['city'] = request.form['city']
         return redirect('/')
-
-    cursor.execute("SELECT * FROM people WHERE id=?", (id,))
-    person = cursor.fetchone()
-
-    conn.close()
 
     return render_template('edit.html', person=person)
 
 @app.route('/delete/<int:id>')
 def delete(id):
-
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM people WHERE id=?", (id,))
-
-    conn.commit()
-    conn.close()
-
+    global people
+    people = [p for p in people if p['id'] != id]
     return redirect('/')
 
 if __name__ == '__main__':
