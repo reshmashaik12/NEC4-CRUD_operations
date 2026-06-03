@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CRUD</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>CRUD</h1>
+
+        <a href="/add" class="btn">Add Person</a>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>City</th>
+                <th>Action</th>
+            </tr>
+
+            {% for person in people %}
+            <tr>
+                <td>{{ person[0] }}</td>
+                <td>{{ person[1] }}</td>
+                <td>{{ person[2] }}</td>
+                <td>{{ person[3] }}</td>
+                <td>
+                    <a href="/edit/{{ person[0] }}">Edit</a> |
+                    <a href="/delete/{{ person[0] }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Person</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>CRUD</h1>
+    <h2>Edit Person</h2>
+
+    <form method="POST">
+
+        <input type="text"
+               name="name"
+               value="{{ person[1] }}"
+               required>
+
+        <input type="number"
+               name="age"
+               value="{{ person[2] }}"
+               required>
+
+        <input type="text"
+               name="city"
+               value="{{ person[3] }}"
+               required>
+
+        <button type="submit">
+            Update
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
